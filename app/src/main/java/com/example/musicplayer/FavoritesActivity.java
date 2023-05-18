@@ -5,13 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
@@ -53,7 +49,7 @@ public class FavoritesActivity extends AppCompatActivity implements FavoritesAda
     public void onItemClick(int position) {
         // Handle item click here
         // For example, start the MainActivity
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(FavoritesActivity.this, MainActivity.class);
         startActivity(intent);
     }
 

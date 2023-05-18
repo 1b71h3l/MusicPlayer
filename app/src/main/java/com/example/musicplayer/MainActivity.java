@@ -54,24 +54,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         //*****the permission
         storagePermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), granted -> {
-            if (granted) {
-                Toast.makeText(MainActivity.this, "Permission available", Toast.LENGTH_LONG).show();
-                //fetchSongs();
-            } else {
-                Toast.makeText(MainActivity.this, "Permission unavailable", Toast.LENGTH_LONG).show();
+            if (!granted) {
                 userResponse();
             }
         });
-        // Show permission rationale if necessary
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
-            Toast.makeText(MainActivity.this, "Permission thing", Toast.LENGTH_LONG).show();
-            userResponse();
-        }
-        //else {
-            //storagePermissionLauncher.launch(permission);
-       // }
 
-       // player = new ExoPlayer.Builder(this).build();
+        //Initialisations
         title = findViewById(R.id.songName);
         playButton = findViewById(R.id.btnPlay);
         pauseButton = findViewById(R.id.btnPause);
@@ -83,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
         allSongs.clear();
         allSongs.addAll(fetchSongs());
 
-       //playerControls();
         //bind to the player service , and do everything after the binding
         doBindService();
 
@@ -91,11 +78,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (!player.isPlaying()) {
-                    startService(new Intent(getApplicationContext(),PlayerService.class));
+                    //startService(new Intent(getApplicationContext(),PlayerService.class));
                     pauseButton.setVisibility(View.VISIBLE);
                     backButton.setVisibility(View.VISIBLE);
                     nextButton.setVisibility(View.VISIBLE);
-                    favButton.setVisibility(View.VISIBLE);
+                    updateFavoriteButtons();
                     title.setVisibility(View.VISIBLE);
                     // Hide the play button
                     playButton.setVisibility(View.GONE);
@@ -118,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
                     // Hide the play button
                     playButton.setVisibility(View.VISIBLE);
                     player.pause();
-                    player.seekTo(0,0);
+                   // player.seekTo(0,0);  //restart from the begining
                 }
             }
         });
@@ -128,6 +115,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if(player.hasNextMediaItem()){
                     player.seekToNext();
+                }else{
+                    player.seekTo(0,0);
                 }
             }
         });
@@ -142,7 +131,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //favorites
-
         database = new Database(this);
         favButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -178,7 +166,6 @@ public class MainActivity extends AppCompatActivity {
         }
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
-
         }
     };
 
@@ -186,7 +173,6 @@ public class MainActivity extends AppCompatActivity {
         //Song song= allSongs.get(0);
         player.setMediaItems(getMediaItems(), 0, 0);
         title.setText(player.getCurrentMediaItem().mediaMetadata.title);
-        Toast.makeText(MainActivity.this, "playerControls", Toast.LENGTH_SHORT).show();
 
         player.addListener(new Player.Listener() {
             @Override
@@ -215,7 +201,7 @@ public class MainActivity extends AppCompatActivity {
                          if(image.getDrawable()==null) {
                              image.setImageResource(R.drawable.music);
                          }}
-
+                     updateFavoriteButtons();
                  }
             }
         });
@@ -244,8 +230,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void userResponse() {
         if(ContextCompat.checkSelfPermission(this,permission)== PackageManager.PERMISSION_GRANTED){
-            Toast.makeText(MainActivity.this, "permission available", Toast.LENGTH_LONG).show();
-            fetchSongs();
+            Toast.makeText(MainActivity.this, "permission available", Toast.LENGTH_SHORT).show();
         }else if ( Build.VERSION.SDK_INT == Build.VERSION_CODES.M) {
             if(shouldShowRequestPermissionRationale(permission)){
                 new AlertDialog.Builder(this)
@@ -318,6 +303,8 @@ public class MainActivity extends AppCompatActivity {
             return songs;
         }
     }
+
+    //The menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
@@ -365,6 +352,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void deleteFromFavorites() {
         database.deleteFavorite((String) player.getCurrentMediaItem().mediaMetadata.title);
+        Toast.makeText(this, "Song deleted from favorites", Toast.LENGTH_SHORT).show();
         updateFavoriteButtons();
     }
 

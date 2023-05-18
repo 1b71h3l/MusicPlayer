@@ -1,4 +1,5 @@
 package com.example.musicplayer;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,7 +53,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
 
         holder.itemView.setOnClickListener(v -> {
             if (clickListener != null) {
-                Toast.makeText(v.getContext(), "click", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(v.getContext(), "click", Toast.LENGTH_SHORT).show();
                 clickListener.onItemClick(position);
             }
         });

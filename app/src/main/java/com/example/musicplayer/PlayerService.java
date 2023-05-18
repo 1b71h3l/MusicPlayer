@@ -8,6 +8,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
 import android.widget.ImageView;
@@ -46,12 +47,6 @@ public class PlayerService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-
-
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
         player = new ExoPlayer.Builder(getApplicationContext()).build();
         AudioAttributes audioAttributes = new AudioAttributes.Builder()
                 .setUsage(C.USAGE_MEDIA)
@@ -77,9 +72,8 @@ public class PlayerService extends Service {
         notificationManager.setPriority(NotificationCompat.PRIORITY_MAX);
         notificationManager.setUseRewindAction(false);
         notificationManager.setUseFastForwardAction(false);
-        return START_STICKY;
-    }
 
+    }
 
 
 
